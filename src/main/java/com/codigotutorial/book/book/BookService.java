@@ -86,7 +86,7 @@ public class BookService {
 
     }
 
-    public PageResponse<BorrowedBookResponse> findAllBorrowedBooks(int page, int size, Authentication connectedUser) {
+    /*public PageResponse<BorrowedBookResponse> findAllBorrowedBooks(int page, int size, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
@@ -99,6 +99,24 @@ public class BookService {
 
         return new PageResponse<>(
                 bookResponse,
+                allBorrowedBooks.getNumber(),
+                allBorrowedBooks.getSize(),
+                allBorrowedBooks.getTotalElements(),
+                allBorrowedBooks.getTotalPages(),
+                allBorrowedBooks.isFirst(),
+                allBorrowedBooks.isLast()
+        );
+    }*/
+
+    public PageResponse<BorrowedBookResponse> findAllBorrowedBooks(int page, int size, Authentication connectedUser) {
+        User user = ((User) connectedUser.getPrincipal());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Page<BookTransactionHistory> allBorrowedBooks = bookTransactionHistoryRepository.findAllBorrowedBooks(pageable, user.getId());
+        List<BorrowedBookResponse> booksResponse = allBorrowedBooks.stream()
+                .map(bookMapper::toBorrowedBookResponse)
+                .toList();
+        return new PageResponse<>(
+                booksResponse,
                 allBorrowedBooks.getNumber(),
                 allBorrowedBooks.getSize(),
                 allBorrowedBooks.getTotalElements(),
@@ -234,9 +252,9 @@ public class BookService {
 
         User user = ((User) connectedUser.getPrincipal());
 
-        if (Objects.equals(book.getOwner().getId(), user.getId())) {
+        if (!Objects.equals(book.getOwner().getId(), user.getId())) {
             // throw an exception
-            throw new OperationNotPermittedException("You cannot borrow your own book");
+            throw new OperationNotPermittedException("You cannot return a book that you do not own");
         }
 
 

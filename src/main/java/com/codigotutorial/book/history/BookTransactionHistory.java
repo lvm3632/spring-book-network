@@ -6,6 +6,7 @@ import com.codigotutorial.book.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "book_transaction_history")
 public class BookTransactionHistory extends BaseEntity {
 
     // user relationship
