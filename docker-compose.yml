@@ -59,4 +59,3 @@ volumes:
     driver: local
   keycloak:
     driver: local
-
